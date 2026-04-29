@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile — Student Performance AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      "primary":"#152c4c","secondary":"#4a607a","surface":"#f8f9fa",
+      "on-surface":"#191c1d","on-surface-variant":"#44474e",
+      "surface-variant":"#e1e3e4","outline-variant":"#c4c6cf",
+      "surface-container-lowest":"#ffffff","surface-tint":"#4a5f82"
+    },
+    fontFamily: { "sans": ["Inter","sans-serif"] }
+  }}
+}
+</script>
+<style>
+.ambient-shadow { box-shadow: 0 4px 12px rgba(27,38,59,0.05); }
+.grade-A{color:#059669;background:rgba(5,150,105,0.1);} .grade-B{color:#152c4c;background:rgba(21,44,76,0.1);}
+.grade-C{color:#b45309;background:rgba(180,83,9,0.1);} .grade-D{color:#c2410c;background:rgba(194,65,12,0.1);}
+.grade-F{color:#ba1a1a;background:rgba(186,26,26,0.1);}
+</style>
+</head>
+<body class="bg-surface text-on-surface font-sans min-h-screen antialiased">
+<div class="max-w-3xl mx-auto px-4 py-10">
+
+  <!-- Back Nav -->
+  <a href="/dashboard" class="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-8 transition-colors">
+    <span class="material-symbols-outlined text-lg">arrow_back</span> Back to Dashboard
+  </a>
+
+  <!-- Profile Header -->
+  <div class="bg-surface-container-lowest rounded-2xl ambient-shadow border border-surface-variant p-8 mb-6">
+    <div class="flex items-center gap-5 mb-6">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-3xl font-black">
+        {{ username[0]|upper }}
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-on-surface">{{ username }}</h1>
+        <p class="text-sm text-on-surface-variant">{{ user.email }}</p>
+        {% if user.institution %}<p class="text-xs text-secondary mt-1">{{ user.institution }}</p>{% endif %}
+      </div>
+    </div>
+
+    <form action="/update_profile" method="POST" class="space-y-4 border-t border-surface-variant pt-6">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1">
+          <label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Username</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="text" name="username" value="{{ user.username }}" required/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Institution</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="text" name="institution" value="{{ user.institution or '' }}" placeholder="e.g. GLA University"/>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Email (read-only)</label>
+        <input class="w-full bg-gray-100 border border-outline-variant rounded-lg px-3 py-2 text-on-surface-variant text-sm cursor-not-allowed" type="email" value="{{ user.email }}" disabled/>
+      </div>
+      <button type="submit" class="bg-primary text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-surface-tint transition-colors shadow-sm text-sm">
+        Save Changes
+      </button>
+    </form>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-surface-container-lowest rounded-xl ambient-shadow border border-surface-variant p-5 text-center">
+      <div class="text-3xl font-black text-primary">{{ total_predictions }}</div>
+      <div class="text-xs uppercase tracking-wider text-on-surface-variant mt-1">Total Predictions</div>
+    </div>
+    <div class="bg-surface-container-lowest rounded-xl ambient-shadow border border-surface-variant p-5 text-center">
+      <div class="text-3xl font-black grade-{{ most_common_grade }} inline-block px-3 py-1 rounded-lg">{{ most_common_grade }}</div>
+      <div class="text-xs uppercase tracking-wider text-on-surface-variant mt-1">Most Common Grade</div>
+    </div>
+    <div class="bg-surface-container-lowest rounded-xl ambient-shadow border border-surface-variant p-5 text-center col-span-2 sm:col-span-1">
+      <div class="text-3xl font-black text-secondary">{{ grade_stats|length }}</div>
+      <div class="text-xs uppercase tracking-wider text-on-surface-variant mt-1">Grade Types</div>
+    </div>
+  </div>
+
+  <!-- Grade Breakdown -->
+  {% if grade_stats %}
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow border border-surface-variant p-6">
+    <h3 class="text-base font-semibold text-on-surface mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">bar_chart</span> Your Grade Breakdown
+    </h3>
+    <div class="space-y-3">
+      {% for grade, count in grade_stats.items()|sort %}
+      <div class="flex items-center gap-3">
+        <span class="font-mono font-bold text-sm w-6 text-center grade-{{ grade }} px-1 py-0.5 rounded">{{ grade }}</span>
+        <div class="flex-1 bg-surface-variant rounded-full h-3 overflow-hidden">
+          <div class="h-full rounded-full bg-primary transition-all duration-500" style="width:{{ (count / total_predictions * 100)|round(0) }}%"></div>
+        </div>
+        <span class="text-xs font-mono text-on-surface-variant w-16 text-right">{{ count }} ({{ (count / total_predictions * 100)|round(1) }}%)</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+</body>
+</html>

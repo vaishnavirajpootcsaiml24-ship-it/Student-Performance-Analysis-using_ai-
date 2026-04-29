@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GLA University — Student Performance Predictor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface":"#f8f9fa","primary-container":"#2d4263","surface-variant":"#e1e3e4","outline-variant":"#c4c6cf","primary-fixed":"#d6e3ff","surface-container-high":"#e7e8e9","error-container":"#ffdad6","on-error-container":"#93000a","surface-container":"#edeeef","surface-container-lowest":"#ffffff","on-surface":"#191c1d","outline":"#74777f","surface-tint":"#4a5f82","on-primary":"#ffffff","on-secondary-container":"#4d637d","background":"#f8f9fa","on-primary-container":"#9aafd5","primary":"#152c4c","secondary":"#4a607a","on-surface-variant":"#44474e","secondary-container":"#c8dffe","surface-container-low":"#f3f4f5","on-error":"#ffffff","on-background":"#191c1d"},fontFamily:{"sans":["Inter","sans-serif"]}}}}
+</script>
+<style>
+.ambient-shadow-lvl1{box-shadow:0 4px 12px rgba(27,38,59,0.05)}
+.grade-A{color:#059669;border-color:#059669;background:rgba(5,150,105,0.07)}
+.grade-B{color:#152c4c;border-color:#152c4c;background:rgba(21,44,76,0.07)}
+.grade-C{color:#b45309;border-color:#b45309;background:rgba(180,83,9,0.07)}
+.grade-D{color:#c2410c;border-color:#c2410c;background:rgba(194,65,12,0.07)}
+.grade-F{color:#ba1a1a;border-color:#ba1a1a;background:rgba(186,26,26,0.07)}
+.tab-btn{padding:8px 14px;border:none;background:none;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:#44474e;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s}
+.tab-btn.active{color:#152c4c;border-bottom-color:#152c4c;font-weight:700}
+.tab-panel{display:none;padding:16px}.tab-panel.active{display:block}
+.toast{position:fixed;top:20px;right:20px;z-index:9999;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;transform:translateX(120%);transition:transform .4s ease;pointer-events:none}
+.toast.show{transform:translateX(0)}
+.toast-success{background:linear-gradient(135deg,#059669,#10b981)}
+.fb-card{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.fb-warn{background:#fffbeb;border-color:#fde68a}.fb-action{background:#eff6ff;border-color:#bfdbfe}
+</style>
+</head>
+<body class="bg-background text-on-background font-sans min-h-screen flex flex-col md:flex-row antialiased">
+
+<!-- Sidebar -->
+<nav class="hidden md:flex flex-col p-4 gap-2 h-screen w-64 border-r border-slate-200 bg-slate-50 fixed left-0 top-0 z-40">
+  <div class="mb-8 mt-2 px-2 flex items-center gap-3">
+    <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white font-black text-sm">GLA</div>
+    <div><div class="text-base font-black text-slate-900 tracking-tight">GLA University</div><div class="text-xs text-slate-500">Student AI Portal</div></div>
+  </div>
+  <a class="flex items-center gap-3 px-3 py-2 bg-white text-slate-900 shadow-sm rounded-lg font-medium text-sm" href="/dashboard">
+    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">analytics</span> Predictor
+  </a>
+  <a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-white hover:shadow-sm rounded-lg font-medium text-sm transition-all" href="/profile">
+    <span class="material-symbols-outlined">person</span> Profile
+  </a>
+  <div class="mt-auto px-2 py-3 border-t border-slate-200">
+    <div class="text-xs text-slate-500 mb-1">Signed in as</div>
+    <div class="font-semibold text-slate-800 text-sm">{{ username }}</div>
+    <a href="/logout" class="mt-2 inline-block text-xs text-red-500 hover:text-red-700">Sign Out</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="flex-1 flex flex-col md:ml-64 w-full min-h-screen">
+<header class="flex justify-between items-center w-full px-6 py-3 h-16 bg-white border-b border-slate-100 shadow-sm sticky top-0 z-50">
+  <div class="text-lg font-bold text-slate-800 tracking-tight">Student Performance Predictor</div>
+  <div class="flex items-center gap-3">
+    <a href="/profile" class="text-sm text-slate-500 hover:text-primary hidden sm:flex items-center gap-1"><span class="material-symbols-outlined text-base">person</span>{{ username }}</a>
+    <a href="/logout" class="text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition-colors">Sign Out</a>
+  </div>
+</header>
+<main class="flex-1 p-4 md:p-8 overflow-y-auto"><div class="max-w-7xl mx-auto space-y-6">
+<div><h1 class="text-3xl font-bold text-on-surface mb-1">Academic Performance Predictor</h1>
+<p class="text-on-surface-variant max-w-2xl">Enter academic metrics to forecast your grade and receive personalised AI feedback.</p></div>
+
+{% if error %}<div class="bg-error-container border border-red-200 text-on-error-container rounded-xl px-4 py-3 text-sm">{{ error }}</div>{% endif %}
+{% if prediction %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
+    <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Study Hours</div>
+    <div class="text-2xl font-bold text-primary font-mono">{{ study_hours }}<span class="text-sm text-on-surface-variant font-sans"> h/wk</span></div>
+  </div>
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
+    <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Attendance</div>
+    <div class="text-2xl font-bold text-secondary font-mono">{{ attendance }}<span class="text-sm text-on-surface-variant font-sans">%</span></div>
+  </div>
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
+    <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">CGPA</div>
+    <div class="text-2xl font-bold font-mono" style="color:#7c3aed">{{ previous_gpa }}<span class="text-sm text-on-surface-variant font-sans">/4</span></div>
+  </div>
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
+    <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Confidence</div>
+    <div class="text-2xl font-bold text-green-600 font-mono">{{ (confidence * 100)|round(1) }}<span class="text-sm text-on-surface-variant font-sans">%</span></div>
+  </div>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left: Input Form -->
+<div class="lg:col-span-5">
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-6">
+    <h3 class="text-lg font-semibold text-on-surface mb-5 border-b border-surface-variant pb-3 flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary">edit_document</span> Academic Parameters
+    </h3>
+    <form id="predictForm" action="/predict" method="POST" class="space-y-4">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Study Hours (Weekly)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="study_hours" placeholder="{{ dataset_stats.study_hours.min }} – {{ dataset_stats.study_hours.max }}" step="0.1" min="{{ dataset_stats.study_hours.min }}" max="{{ dataset_stats.study_hours.max }}" value="{{ study_hours or '' }}" required/></div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Attendance (%)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="attendance" placeholder="{{ dataset_stats.attendance.min }} – {{ dataset_stats.attendance.max }}" step="0.1" min="{{ dataset_stats.attendance.min }}" max="{{ dataset_stats.attendance.max }}" value="{{ attendance or '' }}" required/></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Participation (0–10)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="participation" placeholder="0 – 10" step="0.1" min="0" max="10" value="{{ participation or '' }}" required/></div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Previous CGPA (0–4)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="previous_gpa" placeholder="0 – 4" step="0.01" min="0" max="4" value="{{ previous_gpa or '' }}"/></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Assignment Completion (%)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="assignment_completion" placeholder="40 – 100" step="0.1" min="40" max="100" value="{{ assignment_completion or '' }}"/></div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Motivation (1–10)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="motivation_score" placeholder="1 – 10" step="0.1" min="1" max="10" value="{{ motivation_score or '' }}"/></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Stress Level (1–10)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="stress_level" placeholder="1 – 10" step="0.1" min="1" max="10" value="{{ stress_level or '' }}"/></div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Sleep Hours / Night</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="sleep_hours" placeholder="4 – 10" step="0.1" min="4" max="10" value="{{ sleep_hours or '' }}"/></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Parent Education</label>
+          <select name="parent_education" class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+            {% for val in dataset_stats.parent_education.options %}
+            <option value="{{ val }}" {% if parent_education == val %}selected{% endif %}>Level {{ val }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Extracurricular</label>
+          <select name="extra_curricular" class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+            {% for val in dataset_stats.extra_curricular.options %}
+            <option value="{{ val }}" {% if extra_curricular == val %}selected{% endif %}>Score {{ val }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="pt-2">
+        <button id="submitBtn" class="w-full bg-primary text-on-primary font-semibold py-3 rounded-lg hover:bg-surface-tint transition-colors shadow-sm flex justify-center items-center gap-2 text-sm" type="submit">
+          <span class="material-symbols-outlined text-base">magic_button</span> <span id="btnText">Generate Prediction</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Right: Results -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-6 relative overflow-hidden">
+    <div class="absolute right-0 top-0 w-64 h-64 bg-primary opacity-5 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+    <h3 class="text-xs uppercase tracking-wider text-on-surface-variant mb-5 font-medium">Forecasted Outcome</h3>
+    {% if prediction %}
+    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+      <div class="flex-shrink-0 flex flex-col items-center justify-center w-32 h-32 rounded-2xl border-4 grade-{{ prediction }}">
+        <span class="text-5xl font-bold leading-none">{{ prediction }}</span>
+        <span class="text-xs uppercase tracking-widest opacity-80 mt-1">Grade</span>
+      </div>
+      <div class="flex-1 space-y-3 text-center sm:text-left">
+        <div>
+          {% if prediction == 'A' %}<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold uppercase mb-2"><span class="w-2 h-2 rounded-full bg-green-500"></span> Excellent</div>
+          {% elif prediction == 'B' %}<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold uppercase mb-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Good</div>
+          {% elif prediction == 'C' %}<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold uppercase mb-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Average</div>
+          {% elif prediction == 'D' %}<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-semibold uppercase mb-2"><span class="w-2 h-2 rounded-full bg-orange-500"></span> Below Average</div>
+          {% else %}<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-800 text-xs font-semibold uppercase mb-2"><span class="w-2 h-2 rounded-full bg-red-500"></span> Needs Attention</div>{% endif %}
+          {% if feedback and feedback.summary %}<p class="text-sm text-on-surface-variant">{{ feedback.summary }}</p>{% endif %}
+        </div>
+        <div>
+          <div class="flex justify-between items-end mb-1"><span class="text-xs text-on-surface-variant">Model Confidence</span><span class="text-sm font-semibold text-primary">{{ (confidence * 100)|round(1) }}%</span></div>
+          <div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden"><div class="h-full bg-secondary rounded-full" style="width:{{ (confidence * 100)|round(1) }}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    {% if feedback %}
+    <div class="mt-5 space-y-2">
+      {% if feedback.strengths %}
+      {% for s in feedback.strengths %}<div class="fb-card"><div class="flex gap-2"><span class="material-symbols-outlined text-green-600 text-sm">check_circle</span><p class="text-xs text-green-800"><strong>Strength:</strong> {{ s }}</p></div></div>{% endfor %}
+      {% endif %}
+      {% if feedback.improvements %}
+      {% for i in feedback.improvements %}<div class="fb-card fb-warn"><div class="flex gap-2"><span class="material-symbols-outlined text-amber-600 text-sm">warning</span><p class="text-xs text-amber-800"><strong>Improvement:</strong> {{ i }}</p></div></div>{% endfor %}
+      {% endif %}
+      {% if feedback.actions %}
+      <div class="fb-card fb-action"><p class="text-xs text-blue-800 font-bold mb-1">Recommended Actions:</p><ul class="list-disc list-inside text-[11px] text-blue-700 space-y-0.5">{% for a in feedback.actions %}<li>{{ a }}</li>{% endfor %}</ul></div>
+      {% endif %}
+      <p class="text-[10px] text-on-surface-variant italic mt-2">{{ feedback.confidence_note }}</p>
+    </div>
+    {% endif %}
+
+    {% if probabilities %}
+    <div class="mt-5 pt-5 border-t border-surface-variant">
+      <div class="text-xs uppercase tracking-wider text-on-surface-variant font-medium mb-3">Grade Probabilities</div>
+      <div class="flex flex-col gap-2">
+        {% for g, color in [('A','#059669'),('B','#152c4c'),('C','#b45309'),('D','#c2410c'),('F','#ba1a1a')] %}
+        {% set pval = probabilities.get(g, 0) %}
+        <div class="flex items-center gap-3">
+          <span class="font-mono font-bold text-sm w-4" style="color:{{ color }}">{{ g }}</span>
+          <div class="flex-1 bg-surface-variant rounded-full h-2 overflow-hidden"><div class="h-full rounded-full" style="width:{{ (pval*100)|round(1) }}%;background:{{ color }};"></div></div>
+          <span class="text-xs font-mono text-on-surface-variant w-10 text-right">{{ (pval*100)|round(1) }}%</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="text-center py-12 text-on-surface-variant"><span class="material-symbols-outlined text-5xl text-outline-variant block mb-3">analytics</span><p class="text-sm">Fill in your academic data and click <strong>Generate Prediction</strong>.</p></div>
+    {% endif %}
+  </div>
+
+  <!-- Analytics/Model Info -->
+  <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant overflow-hidden">
+    <div class="flex border-b border-surface-variant">
+      <button class="tab-btn active" onclick="switchTab(event, 'analyticsTab')">Analytics</button>
+      <button class="tab-btn" onclick="switchTab(event, 'modelTab')">Model Info</button>
+    </div>
+    <div id="analyticsTab" class="tab-panel active">
+      <div class="flex justify-between items-center mb-4"><h3 class="text-sm font-bold text-on-surface">Performance Trends</h3><button onclick="loadAnalytics()" class="text-[10px] text-primary hover:underline">Refresh Data</button></div>
+      <div id="analyticsContent" class="h-48 flex items-center justify-center text-xs text-on-surface-variant">
+        {% if history %}Run a prediction or click refresh to see trends.{% else %}History is empty.{% endif %}
+      </div>
+      <div id="chartsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+        <div class="h-40"><canvas id="trendChart"></canvas></div>
+        <div class="h-40"><canvas id="distributionChart"></canvas></div>
+      </div>
+    </div>
+    <div id="modelTab" class="tab-panel">
+      <div id="modelInfoContent" class="space-y-3">
+        <p class="text-xs text-on-surface-variant">Loading model metrics...</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Prediction History -->
+<div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-6">
+  <div class="flex justify-between items-center mb-6 border-b border-surface-variant pb-4">
+    <h3 class="text-lg font-semibold text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-primary">history</span> History</h3>
+    {% if history %}<a href="/clear_history" class="text-xs text-red-500 hover:text-red-700 font-medium flex items-center gap-1" onclick="return confirm('Clear all history?')"><span class="material-symbols-outlined text-sm">delete_sweep</span> Clear All</a>{% endif %}
+  </div>
+  {% if history %}
+  <div class="overflow-x-auto"><table class="w-full text-left text-sm">
+    <thead><tr class="text-on-surface-variant uppercase tracking-wider text-[10px] border-b border-surface-variant"><th class="py-3 px-2">Date</th><th class="py-3 px-2">Grade</th><th class="py-3 px-2">Conf.</th><th class="py-3 px-2 hidden sm:table-cell">Main Metrics</th><th class="py-3 px-2 text-right">Action</th></tr></thead>
+    <tbody class="divide-y divide-surface-variant">
+      {% for item in history %}
+      {% set feat = item.features_json|from_json %}
+      <tr class="hover:bg-surface-container-low transition-colors group">
+        <td class="py-3 px-2 text-[10px] text-on-surface-variant">{{ item.date[:16] }}</td>
+        <td class="py-3 px-2"><span class="font-bold grade-{{ item.prediction }} px-2 py-0.5 rounded text-[11px]">{{ item.prediction }}</span></td>
+        <td class="py-3 px-2 font-mono text-xs">{{ (item.confidence * 100)|round(1) }}%</td>
+        <td class="py-3 px-2 hidden sm:table-cell text-[10px] text-on-surface-variant font-mono">{{ feat.get('study_hours','-') }}h | {{ feat.get('attendance','-') }}% | {{ feat.get('cgpa','-') }}</td>
+        <td class="py-3 px-2 text-right"><a href="/delete_history/{{ item.id }}" class="text-red-400 hover:text-red-600 transition-colors"><span class="material-symbols-outlined text-lg">delete</span></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="text-center py-10 text-on-surface-variant opacity-60"><span class="material-symbols-outlined text-4xl block mb-2">history_toggle_off</span><p class="text-sm">No predictions yet.</p></div>{% endif %}
+</div>
+</div></main></div>
+
+<div id="toast" class="toast toast-success">Success! Prediction generated.</div>
+
+<script>
+function switchTab(evt, tabName) {
+  let i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tab-panel");
+  for (i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
+  tablinks = document.getElementsByClassName("tab-btn");
+  for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+  document.getElementById(tabName).classList.add("active");
+  evt.currentTarget.classList.add("active");
+  if(tabName === 'analyticsTab') loadAnalytics();
+  if(tabName === 'modelTab') loadModelInfo();
+}
+
+async function loadModelInfo() {
+  const container = document.getElementById('modelInfoContent');
+  try {
+    const res = await fetch('/model_info');
+    const data = await res.json();
+    if (data.model_info) {
+      const info = data.model_info;
+      container.innerHTML = `
+        <div class="flex justify-between text-xs border-b border-slate-50 pb-1"><span class="text-on-surface-variant">Model Type</span><span class="font-semibold">${info.model_type}</span></div>
+        <div class="flex justify-between text-xs border-b border-slate-50 pb-1"><span class="text-on-surface-variant">Train R2 Score</span><span class="font-semibold text-green-600">${info.train_r2}</span></div>
+        <div class="flex justify-between text-xs border-b border-slate-50 pb-1"><span class="text-on-surface-variant">Test R2 Score</span><span class="font-semibold text-blue-600">${info.test_r2}</span></div>
+        <div class="flex justify-between text-xs border-b border-slate-50 pb-1"><span class="text-on-surface-variant">MAE (Error)</span><span class="font-semibold text-red-600">${info.mae}</span></div>
+        <div class="text-[10px] text-on-surface-variant italic mt-2">Data dynamically sourced from ML backend.</div>
+      `;
+    } else {
+      container.innerHTML = '<p class="text-xs text-red-500">Failed to parse metrics.</p>';
+    }
+  } catch (e) { container.innerHTML = '<p class="text-xs text-red-500">Failed to load model metrics.</p>'; }
+}
+
+async function loadAnalytics() {
+  const content = document.getElementById('analyticsContent');
+  const grid = document.getElementById('chartsGrid');
+  content.innerHTML = 'Loading analytics...';
+  try {
+    const res = await fetch('/api/analytics');
+    const data = await res.json();
+    if (data.has_data) {
+      content.classList.add('hidden');
+      grid.classList.remove('hidden');
+      renderCharts(data);
+    } else {
+      content.innerHTML = 'Not enough data for analytics.';
+    }
+  } catch (e) { content.innerHTML = 'Failed to load analytics.'; }
+}
+
+let trendChart, distChart;
+function renderCharts(data) {
+  const commonOptions = { 
+    responsive: true, 
+    maintainAspectRatio: false, 
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        beginAtZero: false,
+        min: 40,
+        max: 100,
+        ticks: { font: { size: 9 } }
+      },
+      x: { ticks: { font: { size: 9 } } }
+    }
+  };
+  if(trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: { 
+      labels: data.trend_labels, 
+      datasets: [{ 
+        label: 'Performance Score', 
+        data: data.trend_data, 
+        borderColor: '#152c4c', 
+        tension: 0.3, 
+        fill: true, 
+        backgroundColor: 'rgba(21,44,76,0.05)',
+        pointRadius: 4,
+        pointBackgroundColor: '#152c4c'
+      }] 
+    },
+    options: commonOptions
+  });
+  const gData = data.grade_distribution;
+  if(distChart) distChart.destroy();
+  distChart = new Chart(document.getElementById('distributionChart'), {
+    type: 'doughnut',
+    data: { labels: Object.keys(gData), datasets: [{ data: Object.values(gData), backgroundColor: ['#059669','#152c4c','#b45309','#c2410c','#ba1a1a'] }] },
+    options: { ...commonOptions, plugins: { legend: { display: true, position: 'right', labels: { boxWidth: 10, font: { size: 9 } } } } }
+  });
+}
+
+document.getElementById('predictForm')?.addEventListener('submit', function() {
+  const btn = document.getElementById('submitBtn');
+  const txt = document.getElementById('btnText');
+  btn.disabled = true;
+  btn.classList.add('opacity-70', 'cursor-wait');
+  txt.innerText = 'Analyzing Data...';
+});
+
+{% if prediction %}
+const toast = document.getElementById('toast');
+toast.classList.add('show');
+setTimeout(() => toast.classList.remove('show'), 3000);
+{% endif %}
+</script>
+</body></html>

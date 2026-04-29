@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GLA University — Student Performance AI</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#1e3a8a",
+          "primary-hover": "#1e40af",
+          "background": "#fafafa",
+          "surface": "#ffffff",
+          "on-surface": "#111827",
+          "on-surface-muted": "#4b5563",
+          "accent": "#3b82f6",
+        },
+        fontFamily: { "sans": ["Inter", "sans-serif"] }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+  .glass-panel {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 8px 32px 0 rgba(31,38,135,0.07);
+  }
+</style>
+</head>
+<body class="bg-background text-on-surface font-sans antialiased selection:bg-accent selection:text-white min-h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 glass-panel">
+  <div class="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-8 h-20">
+    <div class="text-2xl font-bold tracking-tight text-primary">GLA<span class="text-on-surface">University</span></div>
+    <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-on-surface-muted">
+      <li><a class="hover:text-primary transition-colors" href="#">Dashboard</a></li>
+      <li><a class="hover:text-primary transition-colors" href="#">Predictions</a></li>
+      <li><a class="hover:text-primary transition-colors" href="#">Analytics</a></li>
+    </ul>
+    <div class="flex items-center gap-4">
+      <a class="text-sm font-medium text-on-surface hover:text-primary transition-colors hidden sm:block" href="/login">Log in</a>
+      <a class="text-sm font-semibold bg-primary text-white px-5 py-2.5 rounded-full hover:bg-primary-hover shadow-md shadow-primary/20 transition-all hover:scale-105 active:scale-95" href="/register">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow pt-28 pb-20 flex flex-col items-center justify-start w-full max-w-7xl mx-auto px-6 lg:px-8 space-y-32">
+
+  <!-- Hero Section -->
+  <section class="w-full flex flex-col lg:flex-row items-center gap-16 min-h-[70vh]">
+    <div class="flex-1 flex flex-col items-start space-y-8 z-10">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-accent text-sm font-medium border border-blue-100">
+        <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+        v2.0 AI Engine Live
+      </div>
+      <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-on-surface leading-tight">
+        Master Your <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Academic Future</span>
+      </h1>
+      <p class="text-xl text-on-surface-muted max-w-lg leading-relaxed">
+        Harness the power of AI to forecast grades, uncover insights, and chart a personalized path to success.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center gap-4 pt-4 w-full sm:w-auto">
+        <a href="/register" class="w-full sm:w-auto text-center bg-primary text-white font-semibold text-lg px-8 py-4 rounded-full shadow-lg shadow-primary/30 hover:bg-primary-hover hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          Start Predicting Free
+        </a>
+        <a href="/guest" class="w-full sm:w-auto text-center bg-white text-on-surface border border-gray-200 font-semibold text-lg px-8 py-4 rounded-full hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm">
+          Try as Guest
+        </a>
+      </div>
+    </div>
+    <div class="flex-1 w-full relative h-[400px] lg:h-[600px] flex items-center justify-center">
+      <div class="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-50 rounded-3xl transform rotate-3 opacity-50 blur-2xl"></div>
+      <div class="relative w-full max-w-md aspect-square glass-panel rounded-3xl p-8 flex flex-col justify-between overflow-hidden shadow-2xl border border-white/50">
+        <div class="flex justify-between items-start">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+            <span class="material-symbols-outlined text-white text-3xl">model_training</span>
+          </div>
+          <div class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase tracking-wide">98% Confidence</div>
+        </div>
+        <div class="space-y-6 mt-8">
+          <div class="space-y-2">
+            <div class="h-2 w-1/3 bg-gray-200 rounded-full"></div>
+            <div class="h-8 w-3/4 bg-gray-800 rounded-lg"></div>
+          </div>
+          <div class="relative h-32 w-full mt-4 flex items-end gap-2">
+            <div class="w-1/5 bg-blue-100 rounded-t-lg h-[40%]"></div>
+            <div class="w-1/5 bg-blue-200 rounded-t-lg h-[60%]"></div>
+            <div class="w-1/5 bg-blue-300 rounded-t-lg h-[75%]"></div>
+            <div class="w-1/5 bg-accent rounded-t-lg h-[90%] shadow-[0_0_15px_rgba(59,130,246,0.5)] relative">
+              <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-2 h-2 rounded-full bg-white shadow-sm"></div>
+            </div>
+            <div class="w-1/5 bg-gray-100 rounded-t-lg h-[50%]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="w-full">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl lg:text-4xl font-bold text-on-surface mb-4">How It Works</h2>
+      <p class="text-lg text-on-surface-muted">Three simple steps to academic clarity.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-100 -z-10 transform -translate-y-1/2"></div>
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 relative z-0">
+        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-6 shadow-md shadow-primary/20">1</div>
+        <h3 class="text-xl font-semibold mb-2">Connect Data</h3>
+        <p class="text-on-surface-muted text-sm">Securely link your LMS or input current grades.</p>
+      </div>
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 relative z-0">
+        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-6 shadow-md shadow-primary/20">2</div>
+        <h3 class="text-xl font-semibold mb-2">AI Analyzes</h3>
+        <p class="text-on-surface-muted text-sm">Our engine processes trends and historical data.</p>
+      </div>
+      <div class="flex flex-col items-center text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 relative z-0">
+        <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-6 shadow-md shadow-primary/20">3</div>
+        <h3 class="text-xl font-semibold mb-2">Get Predictions</h3>
+        <p class="text-on-surface-muted text-sm">Receive actionable insights and grade forecasts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intelligent Tools -->
+  <section class="w-full bg-gray-50 rounded-[3rem] p-8 lg:p-16">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl lg:text-4xl font-bold text-on-surface mb-4">Intelligent Tools</h2>
+      <p class="text-lg text-on-surface-muted">Designed for clarity and action.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="group bg-white rounded-3xl p-8 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border border-gray-100 hover:border-blue-100 transform hover:-translate-y-2 flex flex-col items-center text-center cursor-default">
+        <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <span class="material-symbols-outlined text-4xl text-accent">trending_up</span>
+        </div>
+        <h3 class="text-2xl font-semibold text-on-surface mb-3">Predictive Modeling</h3>
+        <p class="text-on-surface-muted">Accurate end-of-semester forecasts.</p>
+      </div>
+      <div class="group bg-white rounded-3xl p-8 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 border border-gray-100 hover:border-purple-100 transform hover:-translate-y-2 flex flex-col items-center text-center cursor-default">
+        <div class="w-20 h-20 rounded-full bg-purple-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <span class="material-symbols-outlined text-4xl text-purple-500">lightbulb</span>
+        </div>
+        <h3 class="text-2xl font-semibold text-on-surface mb-3">Smart Insights</h3>
+        <p class="text-on-surface-muted">Weekly AI-driven feedback points.</p>
+      </div>
+      <div class="group bg-white rounded-3xl p-8 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-300 border border-gray-100 hover:border-green-100 transform hover:-translate-y-2 flex flex-col items-center text-center cursor-default">
+        <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+          <span class="material-symbols-outlined text-4xl text-green-500">map</span>
+        </div>
+        <h3 class="text-2xl font-semibold text-on-surface mb-3">Growth Roadmap</h3>
+        <p class="text-on-surface-muted">Tailored dynamic study plans.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="w-full border-t border-gray-100 bg-white">
+  <div class="w-full py-12 px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto">
+    <div class="font-semibold text-on-surface text-sm tracking-wide">© 2024 GLA University — Student Performance AI</div>
+    <ul class="flex flex-wrap items-center gap-8 text-sm font-medium text-on-surface-muted">
+      <li><a class="hover:text-primary transition-colors" href="#">Privacy</a></li>
+      <li><a class="hover:text-primary transition-colors" href="#">Terms</a></li>
+      <li><a class="hover:text-primary transition-colors" href="#">Support</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

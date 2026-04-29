@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Student Performance AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Space Grotesk',sans-serif;
+  background:linear-gradient(135deg,#f0f4ff 0%,#e5eeff 100%);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.box {
+  background:#fff; border-radius:20px; padding:44px 40px;
+  width:100%; max-width:420px;
+  box-shadow:0 8px 40px rgba(26,39,68,.12);
+  border:1px solid #e2e8f8;
+}
+.logo {
+  display:flex; align-items:center; gap:10px; margin-bottom:28px;
+  font-size:16px; font-weight:700; color:#1a2744;
+}
+.logo-dot { width:10px; height:10px; border-radius:50%; background:#2d5be3; }
+h2 { font-size:26px; font-weight:700; color:#1a2744; margin-bottom:6px; }
+.sub { font-size:14px; color:#7085b0; margin-bottom:28px; }
+
+label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:#7085b0; display:block; margin-bottom:6px; }
+input {
+  width:100%; padding:12px 14px; border:1.5px solid #e2e8f8;
+  border-radius:10px; font-family:'Space Grotesk',sans-serif;
+  font-size:15px; color:#1e2d50; background:#fafbff; margin-bottom:16px;
+  transition:border-color .2s, box-shadow .2s; outline:none;
+}
+input:focus { border-color:#2d5be3; box-shadow:0 0 0 3px rgba(45,91,227,.1); background:#fff; }
+
+.captcha-box {
+  background:#f0f4ff; border-radius:10px; padding:12px 14px;
+  font-size:14px; font-weight:600; color:#1a2744; margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.captcha-box span { color:#2d5be3; font-size:18px; }
+
+.btn-login {
+  width:100%; padding:13px; background:linear-gradient(135deg,#1a2744,#2d5be3);
+  color:#fff; border:none; border-radius:12px;
+  font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600;
+  cursor:pointer; transition:transform .15s, box-shadow .15s;
+  box-shadow:0 4px 16px rgba(45,91,227,.3);
+}
+.btn-login:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(45,91,227,.4); }
+
+.divider { display:flex; align-items:center; gap:12px; margin:18px 0; }
+.divider hr { flex:1; border:none; border-top:1px solid #e2e8f8; }
+.divider span { font-size:12px; color:#a0b0c8; font-weight:500; }
+
+.btn-guest {
+  width:100%; padding:12px; border:2px dashed #c5d0e8;
+  border-radius:12px; background:none;
+  font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600;
+  color:#7085b0; cursor:pointer; transition:all .2s; text-decoration:none;
+  display:block; text-align:center;
+}
+.btn-guest:hover { border-color:#2d5be3; color:#2d5be3; background:rgba(45,91,227,.04); }
+
+.error { background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:10px 14px; color:#dc2626; font-size:13px; margin-bottom:14px; }
+.footer-links { text-align:center; margin-top:20px; font-size:13px; color:#7085b0; }
+.footer-links a { color:#2d5be3; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo"><div class="logo-dot"></div> Student Performance AI</div>
+  <h2>Welcome back</h2>
+  <p class="sub">Log in to access your AI dashboard</p>
+
+  {% if error %}
+  <div class="error"> {{ error }}</div>
+  {% endif %}
+
+  <form action="/do_login" method="POST">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <label>Email Address</label>
+    <input type="email" name="email" placeholder="you@email.com" required autocomplete="email">
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="••••••••" required>
+
+    <div class="captcha-box">
+       Verify you're human: <span>{{ num1 }} + {{ num2 }} = ?</span>
+    </div>
+    <input type="number" name="captcha" placeholder="Enter answer" required>
+
+    <button type="submit" class="btn-login">→ Login</button>
+  </form>
+
+  <div class="divider"><hr><span>OR</span><hr></div>
+
+  <a href="/guest" class="btn-guest"> Skip — Continue as Guest</a>
+
+  <div class="footer-links">
+    Don't have an account? <a href="/register">Register free</a>
+  </div>
+</div>
+</body>
+</html>

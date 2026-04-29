@@ -1,5 +1,5 @@
-frontend/
-database.db
-output.txt
 __pycache__/
 *.pyc
+.env
+node_modules/
+.pytest_cache/
