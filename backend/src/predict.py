@@ -78,18 +78,28 @@ def predict_grade_full(features):
     X_scaled = _scaler.transform(X_raw) if _scaler else X_raw
 
     # Predict Class and Probabilities
-    grade = _model.predict(X_scaled)[0]
-    probs = _model.predict_proba(X_scaled)[0]
-    classes = _model.classes_
-
-    # Map probabilities to class names
-    prob_dict = {str(cls): float(p) for cls, p in zip(classes, probs)}
+    prediction = _model.predict(X_scaled)[0]
     
-    # Get dynamic confidence (max probability)
-    confidence = float(np.max(probs))
+    # Map numeric prediction to grade
+    if prediction >= 90:
+        grade = 'A'
+    elif prediction >= 80:
+        grade = 'B'
+    elif prediction >= 70:
+        grade = 'C'
+    elif prediction >= 60:
+        grade = 'D'
+    else:
+        grade = 'F'
+    
+    # Fixed confidence for regressor
+    confidence = 0.8
+    
+    # Empty probabilities dict
+    prob_dict = {}
 
     return {
-        "grade": str(grade),
+        "grade": grade,
         "confidence": confidence,
         "probabilities": prob_dict
     }

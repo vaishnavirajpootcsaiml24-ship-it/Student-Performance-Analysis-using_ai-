@@ -80,16 +80,35 @@ def main():
     print("Loading dataset...")
     # 1. Load dataset using pandas
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    data_path = os.path.join(BASE_DIR, 'data', 'student_performance.csv')
+    data_path = os.path.join(BASE_DIR, 'data', 'students_performance.csv')
     df = pd.read_csv(data_path)
     
     # 2. Perform data cleaning (Warning-free method)
-    print("Cleaning data...")
+
+
+    print("Cleaning data...") 
+    # ✅ Step 1: Handle target FIRST (important)
+    grade_mapping = {'A': 95, 'B': 85, 'C': 75, 'D': 65, 'F': 55}
+    if 'grade' in df.columns:
+        df['performance_score'] = df['grade'].map(grade_mapping)
+        df = df.drop(columns=['grade'])
+
+    # ✅ Step 2: Convert ONLY numeric columns
+    numeric_cols = [
+        'study_hours', 'attendance', 'participation', 'extra_curricular',
+        'previous_gpa', 'assignment_completion', 'sleep_hours',
+        'stress_level', 'motivation_score'
+    ]
+
+    # Step 1: Convert to numeric where possible
     for col in df.columns:
-        if df[col].dtype == 'object':
-            df[col] = df[col].fillna(df[col].mode()[0])
-        else:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    # Step 2: Handle missing values
+    for col in df.columns:
+        if np.issubdtype(df[col].dtype, np.number):
             df[col] = df[col].fillna(df[col].median())
+        else:
+            df[col] = df[col].fillna(df[col].mode()[0])
             
     # 3. Feature engineering: create interaction and ratio features
     df['engagement_score'] = (df['attendance'] / 100.0) * df['assignment_completion']

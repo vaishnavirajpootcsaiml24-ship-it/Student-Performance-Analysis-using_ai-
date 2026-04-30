@@ -74,7 +74,7 @@ tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface":"#f8f9fa","pr
   </div>
   <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
     <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">CGPA</div>
-    <div class="text-2xl font-bold font-mono" style="color:#7c3aed">{{ previous_gpa }}<span class="text-sm text-on-surface-variant font-sans">/4</span></div>
+    <div class="text-2xl font-bold font-mono" style="color:#7c3aed">{{ previous_gpa }}<span class="text-sm text-on-surface-variant font-sans">/10</span></div>
   </div>
   <div class="bg-surface-container-lowest rounded-xl ambient-shadow-lvl1 border border-surface-variant p-4">
     <div class="text-xs uppercase tracking-widest text-on-surface-variant mb-1">Confidence</div>
@@ -101,8 +101,8 @@ tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface":"#f8f9fa","pr
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Participation (0–10)</label>
           <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="participation" placeholder="0 – 10" step="0.1" min="0" max="10" value="{{ participation or '' }}" required/></div>
-        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Previous CGPA (0–4)</label>
-          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="previous_gpa" placeholder="0 – 4" step="0.01" min="0" max="4" value="{{ previous_gpa or '' }}"/></div>
+        <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Previous CGPA (0–10)</label>
+          <input class="w-full bg-surface border border-outline-variant rounded-lg px-3 py-2 text-on-surface text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" type="number" name="previous_gpa" placeholder="0 – 10" step="0.01" min="0" max="10" value="{{ previous_gpa or '' }}"/></div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="space-y-1"><label class="text-xs uppercase tracking-wider text-on-surface-variant font-medium">Assignment Completion (%)</label>

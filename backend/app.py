@@ -115,7 +115,7 @@ def home():
 
 
 # ── REGISTER ─────────────────────────────────────────────────────────────────
-
+   
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -301,8 +301,8 @@ def predict():
     
     if not (0 <= participation <= 10):
         errors.append("Participation must be between 0 and 10.")
-    if not (0.0 <= previous_gpa <= 4.0):
-        errors.append("Previous CGPA must be between 0.0 and 4.0 (Dataset Range).")
+    if not (0.0 <= previous_gpa <= 10):
+        errors.append("Previous CGPA must be between 0 and 10 (Dataset Range).")
     if not (40 <= assignment_completion <= 100):
         errors.append("Assignment Completion must be between 40% and 100% (Dataset Range).")
     if not (1 <= motivation_score <= 10):
@@ -598,4 +598,4 @@ def logout():
 # ── RUN ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)     
