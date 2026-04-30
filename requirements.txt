@@ -1,0 +1,13 @@
+flask
+pandas
+numpy
+scikit-learn
+joblib
+werkzeug
+flask-limiter
+bleach
+imbalanced-learn
+gunicorn
+python-dotenv
+matplotlib
+seaborn
