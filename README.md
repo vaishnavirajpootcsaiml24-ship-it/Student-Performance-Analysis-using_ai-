@@ -106,7 +106,7 @@ This project is ready to be deployed to platforms like **Render**, **Heroku**, o
 **Example: Deploying to Render**
 1. Create a new Web Service on Render and link your GitHub repository.
 2. Set the Build Command to: `pip install -r requirements.txt`
-3. Set the Start Command to: `gunicorn backend.app:app`
+3. Set the Start Command to: `gunicorn backend.app:app --bind 0.0.0.0:$PORT`
 4. Add environment variables:
    - `SECRET_KEY`: Generate a secure random string.
    - `FLASK_ENV`: Set to `production`.
