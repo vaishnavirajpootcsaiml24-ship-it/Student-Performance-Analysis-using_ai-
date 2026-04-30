@@ -94,6 +94,24 @@ Student_performance_using_AI/
    ```
 3. Open your browser and go to: `http://127.0.0.1:5000`
 
+## 🌍 Deployment
+This project is ready to be deployed to platforms like **Render**, **Heroku**, or any standard Linux server. 
+
+**Deployment Prerequisites included:**
+- `Procfile`: Configured for Gunicorn.
+- `requirements.txt`: Updated with `gunicorn` and `python-dotenv`.
+- `runtime.txt`: Specifies Python 3.11.9.
+- `.env.example`: Template for required environment variables.
+
+**Example: Deploying to Render**
+1. Create a new Web Service on Render and link your GitHub repository.
+2. Set the Build Command to: `pip install -r requirements.txt`
+3. Set the Start Command to: `gunicorn backend.app:app`
+4. Add environment variables:
+   - `SECRET_KEY`: Generate a secure random string.
+   - `FLASK_ENV`: Set to `production`.
+   - `DB_PATH`: Optionally mount a disk to `/var/data` and set DB_PATH to `/var/data/database.db` to persist user history.
+
 ## 🧪 Testing
 The project includes automated tests to ensure everything is working correctly.
 - **App Tests**: `pytest backend/test_app.py` (Checks routes, login, and predictions)

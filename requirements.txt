@@ -8,3 +8,4 @@ flask-limiter
 bleach
 imbalanced-learn
 gunicorn
+python-dotenv

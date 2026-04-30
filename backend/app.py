@@ -27,7 +27,7 @@ app = Flask(
     template_folder='../frontend/templates',
     static_folder='../frontend/static'
 )
-app.secret_key = "studentai_secret_2024"
+app.secret_key = os.environ.get("SECRET_KEY", "studentai_secret_2024")
 
 # ── Rate Limiting ─────────────────────────────────────────────────────────────
 try:
