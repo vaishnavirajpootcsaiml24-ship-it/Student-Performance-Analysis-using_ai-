@@ -8,13 +8,15 @@ import bleach
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 import pandas as pd
+
+# Ensure backend directory is in sys.path for imports so we can resolve 'src'
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from src.database import get_db, init_db
 from src.predict import predict_grade_full
 from src.train_model import generate_ai_feedback
-
-# Ensure backend directory is in sys.path for imports
-import sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 class DummyScaler:
     """A dummy scaler to replace StandardScaler since tree-based models don't need scaling.
