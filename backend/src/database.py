@@ -3,7 +3,10 @@ import os
 
 # Database path relative to project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.environ.get('DB_PATH', os.path.join(BASE_DIR, 'database.db'))
+DB_PATH = os.environ.get(
+    'DB_PATH',
+    os.path.join(os.path.dirname(BASE_DIR), 'database.db')
+)
 
 def init_db():
     """Initialize the database with all required tables.
