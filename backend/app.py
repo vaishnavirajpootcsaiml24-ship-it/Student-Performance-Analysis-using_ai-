@@ -14,9 +14,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from src.database import get_db, init_db
-from src.predict import predict_grade_full
-from src.train_model import generate_ai_feedback
+from backend.src.database import get_db, init_db
+from backend.src.predict import predict_grade_full
+from backend.src.train_model import generate_ai_feedback
 
 class DummyScaler:
     """A dummy scaler to replace StandardScaler since tree-based models don't need scaling.
